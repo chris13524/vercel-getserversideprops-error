@@ -1,8 +1,28 @@
+import { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
-export default function Home() {
+export const getServerSideProps: GetServerSideProps<Props, { key: string }> = async (context) => {
+  const param = context.query.param;
+
+  if (!param) throw new Error("param must exist");
+
+  let message;
+  if (param == "yes") message = "Yes";
+  else if (param == "no") message = "No";
+  else throw new Error(`unknown param value: ${param}`);
+
+  return {
+    props: {
+      message,
+    },
+  };
+};
+
+type Props = { message: string };
+
+const Home: NextPage<Props> = ({ message }) => {
   return (
     <div className={styles.container}>
       <Head>
@@ -13,7 +33,7 @@ export default function Home() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+          Message: {message}
         </h1>
 
         <p className={styles.description}>
@@ -69,3 +89,5 @@ export default function Home() {
     </div>
   )
 }
+
+export default Home;
